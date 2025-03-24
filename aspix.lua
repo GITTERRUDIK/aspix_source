@@ -503,7 +503,7 @@ local Window = Rayfield:CreateWindow({
  })
 
  local ESP_toggle_highlight = View:CreateToggle({
-    Name = "Toggle highlight",
+    Name = "Toggle chams",
     CurrentValue = false,
     Flag = "esp_highlight_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function(Value)
@@ -514,6 +514,100 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
+ local Highlight_color = View:CreateColorPicker({
+    Name = "Chams Color",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "highlight_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        HighlightColor = Value
+        for _, highlight in pairs(Storage:GetChildren()) do
+            highlight.FillColor = HighlightColor
+        end
+    end
+})
+
+local fovSlider = AIM:CreateSlider({
+    Name = "FOV",
+    Range = {50, 1500},
+    Increment = 1,
+    Suffix = "idk",
+    CurrentValue = 60,
+    Flag = "fov", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        settings.Aimbot_FOV_Radius = Value
+        fovcircle.Radius = Value
+    end,
+ })
+
+ local speedSlider = AIM:CreateSlider({
+    Name = "Aim-Bot speed",
+    Range = {1, 100},
+    Increment = 1,
+    Suffix = "idk",
+    CurrentValue = 10,
+    Flag = "aimspeed", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        settings.Aimbot_Speed = Value
+    end,
+ })
+
+ local aimKeyInfo = AIM:CreateLabel("AIM Key 'LeftShift'", Color3.fromRGB(227, 3, 252), false)
+
+ local aimbot_slider = AIM:CreateToggle({
+    Name = "Toggle Aimbot",
+    CurrentValue = false,
+    Flag = "aimbot_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        settings.Aimbot = Value
+    end,
+ })
+
+ local aimbot_draw_fov = AIM:CreateToggle({
+    Name = "Draw FOV Circle",
+    CurrentValue = false,
+    Flag = "circle_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        if Value == true then
+            fovcircle.Transparency = 1
+            print(1) 
+        elseif Value == false then
+            fovcircle.Transparency = 0
+            print(0) 
+        end
+    end,
+ })
+
+ local aimbot_teamcheck = AIM:CreateToggle({
+    Name = "Toggle Team check",
+    CurrentValue = false,
+    Flag = "aimbot_teamcheck_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        settings.Aimbot_TeamCheck = Value
+    end,
+ })
+
+ local aimbot_visiblecheck = AIM:CreateToggle({
+    Name = "Toggle visible check",
+    CurrentValue = false,
+    Flag = "aimbot_visiblecheck_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        settings.Aimbot_visiblecheck = Value
+    end,
+ })
+
+ dwUIS.InputBegan:Connect(function(inputObject,gameProcessed)
+	if inputObject.KeyCode == settings.Aimbot_Key then
+		settings.Aiming = true
+
+	end
+end)
+
+dwUIS.InputEnded:Connect(function(inputObject,gameProcessed)
+	if inputObject.KeyCode == settings.Aimbot_Key then
+		settings.Aiming = false
+
+	end
+end)
 
  local Label = about:CreateLabel("by Shmoti, :)", Color3.fromRGB(227, 3, 252), false)
  
