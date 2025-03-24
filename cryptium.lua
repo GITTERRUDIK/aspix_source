@@ -1,11 +1,11 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "ASPIX.CC",
+    Name = "cryptium",
     Icon = 0,
-    LoadingTitle = "aspix.cc",
+    LoadingTitle = "cryptium",
     LoadingSubtitle = "by Shmoti",
-    Theme = "Ocean", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+    Theme = "default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
  
     DisableRayfieldPrompts = false,
     DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
@@ -13,7 +13,7 @@ local Window = Rayfield:CreateWindow({
     ConfigurationSaving = {
        Enabled = true,
        FolderName = nil, -- Create a custom folder for your hub/game
-       FileName = "aspix.cc"
+       FileName = "cryptium"
     },
  
     Discord = {
@@ -24,13 +24,13 @@ local Window = Rayfield:CreateWindow({
  
     KeySystem = false, -- Set this to true to use our key system
     KeySettings = {
-       Title = "ASPIX.CC",
+       Title = "",
        Subtitle = "Key System",
        Note = "Proceed to Linkvertise key system", -- Use this to tell the user how to get a key
-       FileName = "AspixKey", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+       FileName = "", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
        SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
        GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-       Key = {""} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+       Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
     }
 
     
