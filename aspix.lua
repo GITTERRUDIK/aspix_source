@@ -58,14 +58,54 @@ local Window = Rayfield:CreateWindow({
  local about = Window:CreateTab("About")
  local credits = about:CreateSection("Credits")
 
- local esp = main:CreateButton({
-    Name = "ESP V3",
-    Callback = function()
-        Esp.Box = true
+ local esp_box = main:CreateToggle({
+    Name = "ESP Box",
+    CurrentValue = false,
+    Flag = "esp_box_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Esp.Box = Value
     end,
  })
 
- local Label = about:CreateLabel("by Shmoti, ", Color3.fromRGB(227, 3, 252), false)
+ local esp_health = main:CreateToggle({
+    Name = "ESP Health Bar",
+    CurrentValue = false,
+    Flag = "esp_health_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Esp.HealthBar = Value
+    end,
+ })
+
+ local health_side = main:CreateDropdown({
+    Name = "HealthBar side",
+    Options = {"Left","Bottom", "Right"},
+    CurrentOption = {"Left"},
+    MultipleOptions = false,
+    Flag = "health_dropdown", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Options)
+        Esp.HealthBarSide = Options
+    end,
+ })
+
+ local box_color = main:CreateColorPicker({
+    Name = "Box color",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "box_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Esp.BoxColor = Value
+    end
+})
+
+local boxborder_color = main:CreateColorPicker({
+    Name = "Box border color",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "box_border_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Esp.BoxOutlineColor = Value
+    end
+})
+
+ local Label = about:CreateLabel("by Shmoti, :)", Color3.fromRGB(227, 3, 252), false)
  
  local unload = about:CreateButton({
     Name = "Unload",
