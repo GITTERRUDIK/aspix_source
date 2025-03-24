@@ -36,13 +36,25 @@ local Window = Rayfield:CreateWindow({
     
  })
 
- local main = Window:CreateTab("Main", "house")
- local Section = main:CreateSection("ESP")
+ local main = Window:CreateTab("Main")
+ local esps = main:CreateSection("ESP")
 
- local Button = main:CreateButton({
+ local about = Window:CreateTab("About")
+ local credits = about:CreateSection("Credits")
+
+ local esp = main:CreateButton({
     Name = "ESP V1",
     Callback = function()
         pcall(function() loadstring(game:HttpGet('https://raw.githubusercontent.com/ic3w0lf22/Unnamed-ESP/master/UnnamedESP.lua'))() end)
+    end,
+ })
+
+ local Label = about:CreateLabel("by Shmoti, ", Color3.fromRGB(227, 3, 252), false)
+ 
+ local unload = about:CreateButton({
+    Name = "Unload",
+    Callback = function()
+        Rayfield:Destroy()
     end,
  })
 
