@@ -36,21 +36,76 @@ local Window = Rayfield:CreateWindow({
     
  })
 
- local Esp = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/x114/RobloxScripts/ESP/OpenSourceEsp"))()
--- Boxes --
- Esp.Box = false
- Esp.BoxColor = Color3.fromRGB(255,255,255)
- Esp.BoxOutline = true
- Esp.BoxOutlineColor = Color3.fromRGB(0,0,0)
--- HealthBars --
- Esp.HealthBar = false
- Esp.HealthBarSide = "Left" -- Left,Bottom,Right
--- Names --
- Esp.Names = false
- Esp.NamesColor = Color3.fromRGB(255,255,255)
- Esp.NamesOutline = true
- Esp.NamesFont = 2
- Esp.NamesSize = 13
+ local highlightsEnabled = false  -- Set to false to disable highlights by default
+
+ -- Function to highlight a player's character
+ local function highlightPlayer(player)
+     -- Check if the player has a character and is not the local player
+     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+         -- Create a Highlight instance
+         local highlight = Instance.new("Highlight")
+         highlight.Adornee = player.Character
+ 
+         -- Apply custom properties
+         highlight.FillColor = Color3.fromRGB(0,206,209)
+         highlight.FillTransparency = 0.5
+         highlight.OutlineColor = Color3.fromRGB(255,255,255)
+         highlight.OutlineTransparency = 0
+
+ 
+         highlight.Parent = player.Character
+         return highlight
+     end
+     return nil
+ end
+ 
+ -- Function to remove highlight from a player's character
+ local function removeHighlight(player)
+     if player.Character and player.Character:FindFirstChildOfClass("Highlight") then
+         player.Character:FindFirstChildOfClass("Highlight"):Destroy()
+     end
+ end
+ 
+ -- Function to handle when a new player joins
+ local function onPlayerAdded(player)
+     -- Connect to the CharacterAdded event to highlight the character when it appears
+     player.CharacterAdded:Connect(function(character)
+         if highlightsEnabled then
+             highlightPlayer(player)
+         end
+     end)
+ 
+     -- If the character already exists, highlight it immediately if enabled
+     if player.Character and highlightsEnabled then
+         highlightPlayer(player)
+     end
+ end
+ 
+ -- Function to toggle highlights on or off
+ local function toggleHighlights(enable)
+     highlightsEnabled = enable
+ 
+     -- Iterate through all players and update their highlights accordingly
+     local Players = game:GetService("Players")
+     for _, player in ipairs(Players:GetPlayers()) do
+         if highlightsEnabled then
+             highlightPlayer(player)
+         else
+             removeHighlight(player)
+         end
+     end
+ end
+ 
+ -- Get the Players service
+ local Players = game:GetService("Players")
+ 
+ -- Iterate through all existing players
+ for _, player in ipairs(Players:GetPlayers()) do
+     onPlayerAdded(player)
+ end
+ 
+ -- Connect to the PlayerAdded event to handle new players joining
+ Players.PlayerAdded:Connect(onPlayerAdded)
 
  local View = Window:CreateTab("ESP")
  local AIM = Window:CreateTab("Aim-Bot")
@@ -60,59 +115,14 @@ local Window = Rayfield:CreateWindow({
  local about = Window:CreateTab("About")
  local credits = about:CreateSection("Credits")
 
- local esp_box = View:CreateToggle({
-    Name = "ESP Box",
+ local esp_highlight = View:CreateToggle({
+    Name = "ESP Highlight",
     CurrentValue = false,
-    Flag = "esp_box_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Flag = "esp_highlight_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function(Value)
-        Esp.Box = Value
+        toggleHighlights(Value)
     end,
  })
-
- local esp_health = View:CreateToggle({
-    Name = "ESP Health Bar",
-    CurrentValue = false,
-    Flag = "esp_health_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Value)
-        Esp.HealthBar = Value
-    end,
- })
-
- local esp_names = View:CreateToggle({
-    Name = "ESP Names",
-    CurrentValue = false,
-    Flag = "esp_name_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Value)
-        Esp.Names = Value
-    end,
- })
-
- local box_color = View:CreateColorPicker({
-    Name = "Box color",
-    Color = Color3.fromRGB(255,255,255),
-    Flag = "box_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Value)
-        Esp.BoxColor = Value
-    end
-})
-
-local names_color = View:CreateColorPicker({
-    Name = "Names color",
-    Color = Color3.fromRGB(255,255,255),
-    Flag = "name_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Value)
-        Esp.NamesColor = Value
-    end
-})
-
-local boxborder_color = View:CreateColorPicker({
-    Name = "Box border color",
-    Color = Color3.fromRGB(255,255,255),
-    Flag = "box_border_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Value)
-        Esp.BoxOutlineColor = Value
-    end
-})
 
  local Label = about:CreateLabel("by Shmoti, :)", Color3.fromRGB(227, 3, 252), false)
  
