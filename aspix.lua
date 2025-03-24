@@ -36,7 +36,7 @@ local Window = Rayfield:CreateWindow({
     
  })
 
- local Esp = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/x114/RobloxScripts/main/OpenSourceEsp"))()
+ local Esp = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/x114/RobloxScripts/ESP/OpenSourceEsp"))()
 -- Boxes --
  Esp.Box = false
  Esp.BoxColor = Color3.fromRGB(255,255,255)
@@ -52,13 +52,15 @@ local Window = Rayfield:CreateWindow({
  Esp.NamesFont = 2
  Esp.NamesSize = 13
 
- local main = Window:CreateTab("Main")
- local esps = main:CreateSection("ESP")
+ local View = Window:CreateTab("ESP")
+ local AIM = Window:CreateTab("Aim-Bot")
+ local Player = Window:CreateTab("Player")
+ local esps = View:CreateSection("ESP v2")
 
  local about = Window:CreateTab("About")
  local credits = about:CreateSection("Credits")
 
- local esp_box = main:CreateToggle({
+ local esp_box = View:CreateToggle({
     Name = "ESP Box",
     CurrentValue = false,
     Flag = "esp_box_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -67,7 +69,7 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
- local esp_health = main:CreateToggle({
+ local esp_health = View:CreateToggle({
     Name = "ESP Health Bar",
     CurrentValue = false,
     Flag = "esp_health_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -76,7 +78,7 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
- local esp_names = main:CreateToggle({
+ local esp_names = View:CreateToggle({
     Name = "ESP Names",
     CurrentValue = false,
     Flag = "esp_name_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -85,7 +87,7 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
- local box_color = main:CreateColorPicker({
+ local box_color = View:CreateColorPicker({
     Name = "Box color",
     Color = Color3.fromRGB(255,255,255),
     Flag = "box_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -94,7 +96,7 @@ local Window = Rayfield:CreateWindow({
     end
 })
 
-local names_color = main:CreateColorPicker({
+local names_color = View:CreateColorPicker({
     Name = "Names color",
     Color = Color3.fromRGB(255,255,255),
     Flag = "name_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
@@ -103,7 +105,7 @@ local names_color = main:CreateColorPicker({
     end
 })
 
-local boxborder_color = main:CreateColorPicker({
+local boxborder_color = View:CreateColorPicker({
     Name = "Box border color",
     Color = Color3.fromRGB(255,255,255),
     Flag = "box_border_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
