@@ -457,8 +457,7 @@ local Window = Rayfield:CreateWindow({
 
  local View = Window:CreateTab("ESP")
  local AIM = Window:CreateTab("Aim-Bot")
- local man = Window:CreateTab("Player")
- local esps = View:CreateSection("ESP v2")
+ local esps = View:CreateSection("ESP")
 
  local about = Window:CreateTab("About")
  local credits = about:CreateSection("Credits")
@@ -591,15 +590,6 @@ local fovSlider = AIM:CreateSlider({
         end
     end,
  })
-
- local FOV_color = View:CreateColorPicker({
-    Name = "FOV Circle Color",
-    Color = Color3.fromRGB(255,255,255),
-    Flag = "fov_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Value)
-        settings.Aimbot_FOV_Color = Value
-    end
-})
 
  local aimbot_teamcheck = AIM:CreateToggle({
     Name = "Toggle Team check",
