@@ -107,6 +107,47 @@ local Window = Rayfield:CreateWindow({
  -- Connect to the PlayerAdded event to handle new players joining
  Players.PlayerAdded:Connect(onPlayerAdded)
 
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+-- Function to scale the head size
+local function scaleHead(head, scaleEnabled)
+    if head then
+        if scaleEnabled then
+            head.Size = Vector3.new(5, 5, 5)  -- Example: Making the head twice as big
+        else
+            head.Size = Vector3.new(1, 1, 1)  -- Resetting the head size to normal
+        end
+    end
+end
+
+-- Function to apply scaling to all players' heads
+local function applyScalingToAllPlayers(scaleEnabled)
+    for _, otherPlayer in pairs(Players:GetPlayers()) do
+        if otherPlayer ~= player then
+            local otherCharacter = otherPlayer.Character
+            if otherCharacter then
+                local head = otherCharacter:FindFirstChild("Head")
+                scaleHead(head, scaleEnabled)
+            end
+        end
+    end
+end
+
+-- Initial state of scaling
+local isScalingEnabled = false
+
+-- Toggle function
+local function toggleHeadResize(scaleEnabled)
+    isScalingEnabled = scaleEnabled
+    
+    -- Scale the local player's head
+    local head = character:FindFirstChild("Head")
+    scaleHead(head, isScalingEnabled)
+    
+    -- Apply scaling to all other players' heads
+    applyScalingToAllPlayers(isScalingEnabled)
+end
+
  local View = Window:CreateTab("ESP")
  local AIM = Window:CreateTab("Aim-Bot")
  local Player = Window:CreateTab("Player")
@@ -121,6 +162,15 @@ local Window = Rayfield:CreateWindow({
     Flag = "esp_highlight_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function(Value)
         toggleHighlights(Value)
+    end,
+ })
+
+ local aim_bigheads = AIM:CreateToggle({
+    Name = "Big Heads",
+    CurrentValue = false,
+    Flag = "aim_heads_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        toggleHeadResize(Value)
     end,
  })
 
