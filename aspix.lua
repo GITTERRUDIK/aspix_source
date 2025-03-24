@@ -460,11 +460,20 @@ local Window = Rayfield:CreateWindow({
 
  local View = Window:CreateTab("ESP")
  local AIM = Window:CreateTab("Aim-Bot")
- local Player = Window:CreateTab("Player")
+ local man = Window:CreateTab("Player")
  local esps = View:CreateSection("ESP v2")
 
  local about = Window:CreateTab("About")
  local credits = about:CreateSection("Credits")
+
+ local Box_color = View:CreateColorPicker({
+    Name = "",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "box_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Settings.Box_Color = Value
+    end
+})
 
  local ESP_Box = View:CreateToggle({
     Name = "ESP Box",
@@ -551,7 +560,15 @@ local fovSlider = AIM:CreateSlider({
     end,
  })
 
- local aimKeyInfo = AIM:CreateLabel("AIM Key 'LeftShift'", Color3.fromRGB(227, 3, 252), false)
+ local aimKey = AIM:CreateKeybind({
+    Name = "Aimbot KeyBind",
+    CurrentKeybind = "LeftShift",
+    HoldToInteract = false,
+    Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Keybind)
+        settings.Aimbot_Key = Keybind
+    end,
+ })
 
  local aimbot_slider = AIM:CreateToggle({
     Name = "Toggle Aimbot",
@@ -608,6 +625,28 @@ dwUIS.InputEnded:Connect(function(inputObject,gameProcessed)
 
 	end
 end)
+
+local FlyspeedSlider = AIM:CreateSlider({
+    Name = "Fly speed",
+    Range = {1, 100},
+    Increment = 1,
+    Suffix = "",
+    CurrentValue = 50,
+    Flag = "flyspeed", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        flySpeed = Value
+    end,
+ })
+
+
+local fly = man:CreateToggle({
+    Name = "Fly",
+    CurrentValue = false,
+    Flag = "fly_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        flyEnabled = Value
+    end,
+ })
 
  local Label = about:CreateLabel("by Shmoti, :)", Color3.fromRGB(227, 3, 252), false)
  
