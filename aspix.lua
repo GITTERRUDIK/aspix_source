@@ -26,11 +26,11 @@ local Window = Rayfield:CreateWindow({
     KeySettings = {
        Title = "ASPIX.CC",
        Subtitle = "Key System",
-       Note = "Proceed to Luarmor key system", -- Use this to tell the user how to get a key
+       Note = "Proceed to Linkvertise key system", -- Use this to tell the user how to get a key
        FileName = "AspixKey", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
        SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
        GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-       Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+       Key = {""} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
     }
 
     
@@ -76,12 +76,30 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
+ local esp_names = main:CreateToggle({
+    Name = "ESP Names",
+    CurrentValue = false,
+    Flag = "esp_name_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Esp.Names = Value
+    end,
+ })
+
  local box_color = main:CreateColorPicker({
     Name = "Box color",
     Color = Color3.fromRGB(255,255,255),
     Flag = "box_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function(Value)
         Esp.BoxColor = Value
+    end
+})
+
+local names_color = main:CreateColorPicker({
+    Name = "Names color",
+    Color = Color3.fromRGB(255,255,255),
+    Flag = "name_color", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Esp.NamesColor = Value
     end
 })
 
