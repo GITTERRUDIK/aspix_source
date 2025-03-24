@@ -5,7 +5,7 @@ local Window = Rayfield:CreateWindow({
     Icon = 0,
     LoadingTitle = "aspix.cc",
     LoadingSubtitle = "by Shmoti",
-    Theme = "Amethyst", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+    Theme = "Ocean", -- Check https://docs.sirius.menu/rayfield/configuration/themes
  
     DisableRayfieldPrompts = false,
     DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
@@ -36,117 +36,427 @@ local Window = Rayfield:CreateWindow({
     
  })
 
- local highlightsEnabled = false  -- Set to false to disable highlights by default
-
- -- Function to highlight a player's character
- local function highlightPlayer(player)
-     -- Check if the player has a character and is not the local player
-     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-         -- Create a Highlight instance
-         local highlight = Instance.new("Highlight")
-         highlight.Adornee = player.Character
+ local TeamCheck = false
+ local TeamColors = false
+ local HideFriendly = false
+ local HideEnemy = false
+ local Storage = game:GetService("CoreGui")
+ local Players = game:GetService("Players")
+ local RunService = game:GetService("RunService")
+ local Neutral = Color3.fromRGB(255, 255, 255)
+ local Friendly = Color3.fromRGB(47, 211, 61)
+ local Enemy = Color3.fromRGB(211, 47, 47)
  
-         -- Apply custom properties
-         highlight.FillColor = Color3.fromRGB(0,206,209)
-         highlight.FillTransparency = 0.5
-         highlight.OutlineColor = Color3.fromRGB(255,255,255)
-         highlight.OutlineTransparency = 0
-
  
-         highlight.Parent = player.Character
-         return highlight
-     end
-     return nil
- end
  
- -- Function to remove highlight from a player's character
- local function removeHighlight(player)
-     if player.Character and player.Character:FindFirstChildOfClass("Highlight") then
-         player.Character:FindFirstChildOfClass("Highlight"):Destroy()
-     end
- end
  
- -- Function to handle when a new player joins
- local function onPlayerAdded(player)
-     -- Connect to the CharacterAdded event to highlight the character when it appears
-     player.CharacterAdded:Connect(function(character)
-         if highlightsEnabled then
-             highlightPlayer(player)
-         end
-     end)
  
-     -- If the character already exists, highlight it immediately if enabled
-     if player.Character and highlightsEnabled then
-         highlightPlayer(player)
-     end
- end
+ local tpKillEnabled = false 
+ local tpKillKey = Enum.KeyCode.E  
+ local Esp = false
+ local Names = false
+ local ColoEs = Color3.fromRGB(255, 255, 255)
+ local ColoNa = Color3.fromRGB(255, 255, 255)
+ local HighlightEnabled = false
+ local HighlightColor = Color3.fromRGB(175, 25, 255)
  
- -- Function to toggle highlights on or off
- local function toggleHighlights(enable)
-     highlightsEnabled = enable
  
-     -- Iterate through all players and update their highlights accordingly
-     local Players = game:GetService("Players")
-     for _, player in ipairs(Players:GetPlayers()) do
-         if highlightsEnabled then
-             highlightPlayer(player)
-         else
-             removeHighlight(player)
-         end
-     end
- end
- 
- -- Get the Players service
+ local TeamCheck = true 
+ local tpKillEnabled = false 
+ local tpKillKey = Enum.KeyCode.E  
  local Players = game:GetService("Players")
  
- -- Iterate through all existing players
- for _, player in ipairs(Players:GetPlayers()) do
-     onPlayerAdded(player)
+ local flyEnabled = false
+ local flyKey = Enum.KeyCode.F  
+ local flySpeed = 50  
+ local userInputService = game:GetService("UserInputService")
+ 
+ 
+ 
+ local Camera = game:GetService("Workspace").CurrentCamera
+ 
+ local StarterGui = game:GetService("StarterGui")
+ local Settings = {
+     Box_Color = Color3.fromRGB(255, 0, 0),
+     Tracer_Color = Color3.fromRGB(255, 0, 0),
+     Tracer_Thickness = 1,
+     Box_Thickness = 1,
+     Tracer_Origin = "Bottom", 
+     Tracer_FollowMouse = false,
+     Tracers = false
+ }
+ 
+ local Team_Check = {
+     TeamCheck = false, 
+     Green = Color3.fromRGB(0, 255, 0),
+     Red = Color3.fromRGB(255, 0, 0)
+ }
+ 
+ local TeamColor = true
+ 
+ local player = game:GetService("Players").LocalPlayer
+ local camera = game:GetService("Workspace").CurrentCamera
+ local mouse = player:GetMouse()
+ local FillColor = Color3.fromRGB(175,25,255)
+ local DepthMode = "AlwaysOnTop"
+ local FillTransparency = 0.5
+ local OutlineColor = Color3.fromRGB(255,255,255)
+ local OutlineTransparency = 0
+ 
+ local CoreGui = game:FindService("CoreGui")
+ local Players = game:FindService("Players")
+ local lp = Players.LocalPlayer
+ local connections = {}
+ 
+ local Storage = Instance.new("Folder")
+ Storage.Parent = CoreGui
+ Storage.Name = "Highlight_Storage"
+ 
+ local function Highlight(plr)
+     local Highlight = Instance.new("Highlight")
+     Highlight.Name = plr.Name
+     Highlight.FillColor = HighlightColor  
+     Highlight.DepthMode = DepthMode
+     Highlight.FillTransparency = FillTransparency
+     Highlight.OutlineColor = OutlineColor
+     Highlight.OutlineTransparency = 0
+     Highlight.Enabled = HighlightEnabled  
+     Highlight.Parent = Storage
+     
+     local plrchar = plr.Character
+     if plrchar then
+         Highlight.Adornee = plrchar
+     end
+ 
+     connections[plr] = plr.CharacterAdded:Connect(function(char)
+         Highlight.Adornee = char
+     end)
  end
  
- -- Connect to the PlayerAdded event to handle new players joining
- Players.PlayerAdded:Connect(onPlayerAdded)
-
-local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
--- Function to scale the head size
-local function scaleHead(head, scaleEnabled)
-    if head then
-        if scaleEnabled then
-            head.Size = Vector3.new(5, 5, 5)  -- Example: Making the head twice as big
-        else
-            head.Size = Vector3.new(1, 1, 1)  -- Resetting the head size to normal
-        end
-    end
-end
-
--- Function to apply scaling to all players' heads
-local function applyScalingToAllPlayers(scaleEnabled)
-    for _, otherPlayer in pairs(Players:GetPlayers()) do
-        if otherPlayer ~= player then
-            local otherCharacter = otherPlayer.Character
-            if otherCharacter then
-                local head = otherCharacter:FindFirstChild("Head")
-                scaleHead(head, scaleEnabled)
-            end
-        end
-    end
-end
-
--- Initial state of scaling
-local isScalingEnabled = false
-
--- Toggle function
-local function toggleHeadResize(scaleEnabled)
-    isScalingEnabled = scaleEnabled
+ for _, player in pairs(Players:GetPlayers()) do
+     Highlight(player)
+ end
+ Players.PlayerAdded:Connect(Highlight)
+ Players.PlayerRemoving:Connect(function(plr)
+     local highlight = Storage:FindFirstChild(plr.Name)
+     if highlight then
+         highlight:Destroy()
+     end
+     if connections[plr] then
+         connections[plr]:Disconnect()
+     end
+ end)
+ 
+ local function NewQuad(thickness, color)
+     local quad = Drawing.new("Quad")
+     quad.Visible = false
+     quad.PointA = Vector2.new(0, 0)
+     quad.PointB = Vector2.new(0, 0)
+     quad.PointC = Vector2.new(0, 0)
+     quad.PointD = Vector2.new(0, 0)
+     quad.Color = color
+     quad.Filled = false
+     quad.Thickness = thickness
+     quad.Transparency = 1
+     return quad
+ end
+ 
+ local function NewLine(thickness, color)
+     local line = Drawing.new("Line")
+     line.Visible = false
+     line.From = Vector2.new(0, 0)
+     line.To = Vector2.new(0, 0)
+     line.Color = color 
+     line.Thickness = thickness
+     line.Transparency = 1
+     return line
+ end
+ 
+ local function NewText(size, color)
+     local text = Drawing.new("Text")
+     text.Visible = false
+     text.Size = size
+     text.Color = color
+     text.Center = true
+     text.Outline = true
+     text.OutlineColor = Color3.fromRGB(0, 0, 0) 
+     text.Text = ""
+     return text
+ end
+ 
+ local function Visibility(state, lib)
+     for _, x in pairs(lib) do
+         x.Visible = state
+     end
+ end
+ 
+ local black = Color3.fromRGB(0, 0, 0)
+ local connections = {}
+ local tracers = {} 
+ local names = {} 
+ 
+ local function ESPCleanup(plr)
     
-    -- Scale the local player's head
-    local head = character:FindFirstChild("Head")
-    scaleHead(head, isScalingEnabled)
+     if tracers[plr] then
+         for _, tracer in pairs(tracers[plr]) do
+             tracer.Visible = false
+             tracer:Remove()  
+         end
+         tracers[plr] = nil  
+     end
+     
     
-    -- Apply scaling to all other players' heads
-    applyScalingToAllPlayers(isScalingEnabled)
-end
+     if names[plr] then
+         names[plr].Visible = false
+         names[plr]:Remove()  
+         names[plr] = nil 
+     end
+     
+     
+     if connections[plr] then
+         connections[plr]:Disconnect()
+         connections[plr] = nil
+     end
+ end
+ local function ESP(plr)
+    
+     local library = {
+         blacktracer = NewLine(Settings.Tracer_Thickness * 2, black),
+         tracer = NewLine(Settings.Tracer_Thickness, Settings.Tracer_Color),
+         black = NewQuad(Settings.Box_Thickness * 2, black),
+         box = NewQuad(Settings.Box_Thickness, Settings.Box_Color),
+         healthbar = NewLine(3, black),
+         greenhealth = NewLine(1.5, black),
+         nameText = NewText(15, ColoNa)  
+     }
+ 
+  
+     tracers[plr] = {library.tracer, library.blacktracer}
+     names[plr] = library.nameText
+ 
+     local function Colorize(color)
+         for _, x in pairs(library) do
+             if x ~= library.healthbar and x ~= library.greenhealth and x ~= library.blacktracer and x ~= library.black then
+                 x.Color = color
+             end
+         end
+     end
+ 
+     local function Updater()
+         local connection
+         connection = game:GetService("RunService").RenderStepped:Connect(function()
+             if plr.Character and plr.Character:FindFirstChild("Humanoid") and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character.Humanoid.Health > 0 and plr.Character:FindFirstChild("Head") then
+                 local HumPos, OnScreen = camera:WorldToViewportPoint(plr.Character.HumanoidRootPart.Position)
+                 if OnScreen then
+                     local head = camera:WorldToViewportPoint(plr.Character.Head.Position)
+                     local DistanceY = math.clamp((Vector2.new(head.X, head.Y) - Vector2.new(HumPos.X, HumPos.Y)).magnitude, 2, math.huge)
+ 
+                     local function Size(item)
+                         item.PointA = Vector2.new(HumPos.X + DistanceY, HumPos.Y - DistanceY * 2)
+                         item.PointB = Vector2.new(HumPos.X - DistanceY, HumPos.Y - DistanceY * 2)
+                         item.PointC = Vector2.new(HumPos.X - DistanceY, HumPos.Y + DistanceY * 2)
+                         item.PointD = Vector2.new(HumPos.X + DistanceY, HumPos.Y + DistanceY * 2)
+                     end
+ 
+                     if Esp then
+                         Size(library.box)
+                         Size(library.black)
+ 
+                       
+                         if Names then
+                             library.nameText.Position = Vector2.new(head.X, head.Y - 50) 
+                             library.nameText.Text = plr.Name
+                             library.nameText.Visible = true
+                         else
+                             library.nameText.Visible = false  
+                         end
+ 
+                         if Settings.Tracers then
+                             if Settings.Tracer_Origin == "Middle" then
+                                 library.tracer.From = camera.ViewportSize * 0.5
+                                 library.blacktracer.From = camera.ViewportSize * 0.5
+                             elseif Settings.Tracer_Origin == "Bottom" then
+                                 library.tracer.From = Vector2.new(camera.ViewportSize.X * 0.5, camera.ViewportSize.Y)
+                                 library.blacktracer.From = Vector2.new(camera.ViewportSize.X * 0.5, camera.ViewportSize.Y)
+                             end
+                             if Settings.Tracer_FollowMouse then
+                                 library.tracer.From = Vector2.new(mouse.X, mouse.Y + 36)
+                                 library.blacktracer.From = Vector2.new(mouse.X, mouse.Y + 36)
+                             end
+                             library.tracer.To = Vector2.new(HumPos.X, HumPos.Y + DistanceY * 2)
+                             library.blacktracer.To = Vector2.new(HumPos.X, HumPos.Y + DistanceY * 2)
+                         end
+ 
+                         local d = (Vector2.new(HumPos.X - DistanceY, HumPos.Y - DistanceY * 2) - Vector2.new(HumPos.X - DistanceY, HumPos.Y + DistanceY * 2)).magnitude 
+                         local healthoffset = plr.Character.Humanoid.Health / plr.Character.Humanoid.MaxHealth * d
+ 
+                         library.greenhealth.From = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y + DistanceY * 2)
+                         library.greenhealth.To = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y + DistanceY * 2 - healthoffset)
+ 
+                         library.healthbar.From = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y + DistanceY * 2)
+                         library.healthbar.To = Vector2.new(HumPos.X - DistanceY - 4, HumPos.Y - DistanceY * 2)
+ 
+                         library.greenhealth.Color = Color3.fromRGB(255, 0, 0):lerp(Color3.fromRGB(0, 255, 0), plr.Character.Humanoid.Health / plr.Character.Humanoid.MaxHealth)
+ 
+                         if Team_Check.TeamCheck then
+                             if plr.TeamColor == player.TeamColor then
+                                 Colorize(Team_Check.Green)
+                             else 
+                                 Colorize(Team_Check.Red)
+                             end
+                         else 
+                             library.tracer.Color = Settings.Tracer_Color
+                             library.box.Color = Settings.Box_Color
+                         end
+ 
+                         if TeamColor then
+                             Colorize(plr.TeamColor.Color)
+                         end
+ 
+                         Visibility(true, library)
+                     else
+                         Visibility(false, library)  
+                     end
+                 else 
+                     Visibility(false, library)  
+                 end
+             else 
+                 Visibility(false, library)  
+                 if game.Players:FindFirstChild(plr.Name) == nil then
+                     connection:Disconnect()
+                 end
+             end
+         end)
+     end
+     coroutine.wrap(Updater)()
+ end
+ 
+ local dwCamera = workspace.CurrentCamera
+ local dwRunService = game:GetService("RunService")
+ local dwUIS = game:GetService("UserInputService")
+ local dwEntities = game:GetService("Players")
+ local dwLocalPlayer = dwEntities.LocalPlayer
+ local dwMouse = dwLocalPlayer:GetMouse()
+ local safe = setmetatable({}, {
+     __index = function(_, k)
+         return game:GetService(k)
+     end
+ })
+ local PlayerTable = {}
+ 
+ for i,v in pairs(game:GetService("Players"):GetPlayers()) do 
+     if v ~= dwLocalPlayer then
+         table.insert(PlayerTable,v.Name)
+     end
+ end
+ local cam = safe.Workspace.CurrentCamera 
+ local lp = safe.Players.LocalPlayer 
+ local lpc = safe.Players.LocalPlayer.Character 
+ local function inlos(p, ...) 
+     return #cam:GetPartsObscuringTarget({p}, {cam, lp.Character, ...}) == 0
+ end
+ 
+ 
+ local settings = {
+     Aimbot = false,
+     Aiming = false,
+     Aimbot_AimPart = "Head",
+     Aimbot_TeamCheck = false,
+     Aimbot_Draw_FOV = true,
+     Aimbot_FOV_Radius = 200,
+     Aimbot_FOV_Color = Color3.fromRGB(255,255,255),
+     Aimbot_visiblecheck = false,
+     Aimbot_Key = Enum.KeyCode.LeftShift,
+     Aimbot_Onscreen = true,
+     Aimbot_Speed = 10
+ }
+ 
+ 
+ local fovcircle = Drawing.new("Circle")
+ fovcircle.Visible = settings.Aimbot_Draw_FOV
+ fovcircle.Radius = settings.Aimbot_FOV_Radius
+ fovcircle.Color = settings.Aimbot_FOV_Color
+ fovcircle.Thickness = 1
+ fovcircle.Filled = false
+ fovcircle.Transparency = 0
+ 
+ fovcircle.Position = Vector2.new(dwCamera.ViewportSize.X / 2, dwCamera.ViewportSize.Y / 2)
+ 
+ 
+ 
+ dwRunService.RenderStepped:Connect(function()
+ 
+     local dist = math.huge
+     local closest_char = nil
+     if settings.Aimbot then
+         if settings.Aiming then
+ 
+             for i,v in next, dwEntities:GetChildren() do 
+                 if v ~= dwLocalPlayer and
+                     v.Character and
+                     v.Character:FindFirstChild("HumanoidRootPart") and
+                     v.Character:FindFirstChild("Humanoid") and
+                     v.Character:FindFirstChild("Humanoid").Health > 0 then
+ 
+                     if settings.Aimbot_TeamCheck == true and
+                         v.Team ~= dwLocalPlayer.Team or
+                         settings.Aimbot_TeamCheck == false then
+ 
+                         local char = v.Character
+                         local char_part_pos, is_onscreen = dwCamera:WorldToViewportPoint(char[settings.Aimbot_AimPart].Position)
+ 
+                         if is_onscreen and settings.Aimbot_Onscreen or settings.Aimbot_Onscreen == false then
+                             local mag = (Vector2.new(dwMouse.X, dwMouse.Y) - Vector2.new(char_part_pos.X, char_part_pos.Y)).Magnitude
+                             if mag < dist and mag < settings.Aimbot_FOV_Radius then
+                                 dist = mag
+                                 closest_char = char
+                             end
+                         end
+                     end
+                 end
+             end
+ 
+             if closest_char ~= nil and
+                 closest_char:FindFirstChild("HumanoidRootPart") and
+                 closest_char:FindFirstChild("Humanoid") and
+                 closest_char:FindFirstChild("Humanoid").Health > 0 then
+                 local targetPos = closest_char[settings.Aimbot_AimPart].Position
+                 if inlos(targetPos, closest_char) and settings.Aimbot_visiblecheck then
+                   
+                     dwCamera.CFrame = dwCamera.CFrame:Lerp(CFrame.new(dwCamera.CFrame.Position, targetPos), settings.Aimbot_Speed * 0.02)
+                 elseif not settings.Aimbot_visiblecheck then
+                     dwCamera.CFrame = dwCamera.CFrame:Lerp(CFrame.new(dwCamera.CFrame.Position, targetPos), settings.Aimbot_Speed * 0.02)
+                 end
+             end
+         end
+     end
+ end)
+ 
+ 
+ game:GetService('RunService').Stepped:connect(function()
+     if aimbotting then
+         --MouseTests()
+     end
+ end)
+ 
+ 
+ local plr = safe.Players.LocalPlayer
+ local mouse = plr:GetMouse()
+ 
+ 
+ for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+     if v.Name ~= player.Name then
+         coroutine.wrap(ESP)(v)
+     end
+ end
+ 
+ game.Players.PlayerAdded:Connect(function(newplr)
+     if newplr.Name ~= player.Name then
+         coroutine.wrap(ESP)(newplr)
+     end
+ end)
+
+ local flySpeed = 50
 
  local View = Window:CreateTab("ESP")
  local AIM = Window:CreateTab("Aim-Bot")
@@ -156,12 +466,51 @@ end
  local about = Window:CreateTab("About")
  local credits = about:CreateSection("Credits")
 
- local esp_highlight = View:CreateToggle({
-    Name = "ESP Highlight",
+ local ESP_Box = View:CreateToggle({
+    Name = "ESP Box",
+    CurrentValue = false,
+    Flag = "esp_box_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Esp = Value
+    end,
+ })
+
+ local ESP_name = View:CreateToggle({
+    Name = "ESP Name",
+    CurrentValue = false,
+    Flag = "esp_name_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Names = Value
+    end,
+ })
+
+ local ESP_toggle_teamcheck = View:CreateToggle({
+    Name = "Toggle team check",
+    CurrentValue = false,
+    Flag = "esp_team_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Team_Check.TeamCheck = Value
+    end,
+ })
+
+ local ESP_toggle_colors = View:CreateToggle({
+    Name = "Toggle team colors",
+    CurrentValue = false,
+    Flag = "esp_teamcolor_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        TeamColor = Value
+    end,
+ })
+
+ local ESP_toggle_highlight = View:CreateToggle({
+    Name = "Toggle highlight",
     CurrentValue = false,
     Flag = "esp_highlight_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function(Value)
-        toggleHighlights(Value)
+        HighlightEnabled = Value
+        for _, highlight in pairs(Storage:GetChildren()) do
+            highlight.Enabled = HighlightEnabled 
+        end
     end,
  })
 
@@ -170,7 +519,7 @@ end
     CurrentValue = false,
     Flag = "aim_heads_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function(Value)
-        toggleHeadResize(Value)
+        _G.HeadSize = 20 _G.Disabled = true game:GetService('RunService').RenderStepped:connect(function() if _G.Disabled then for i,v in next, game:GetService('Players'):GetPlayers() do if v.Name ~= game:GetService('Players').LocalPlayer.Name then pcall(function() v.Character.Head.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize) v.Character.Head.Transparency = 1 v.Character.Head.BrickColor = BrickColor.new("Red") v.Character.Head.Material = "Neon" v.Character.Head.CanCollide = false v.Character.Head.Massless = true end) end end end end)
     end,
  })
 
