@@ -76,17 +76,6 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
- local health_side = main:CreateDropdown({
-    Name = "HealthBar side",
-    Options = {"Left","Bottom", "Right"},
-    CurrentOption = {"Left"},
-    MultipleOptions = false,
-    Flag = "health_dropdown", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Options)
-        Esp.HealthBarSide = Options
-    end,
- })
-
  local box_color = main:CreateColorPicker({
     Name = "Box color",
     Color = Color3.fromRGB(255,255,255),
