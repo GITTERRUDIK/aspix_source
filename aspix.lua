@@ -514,14 +514,6 @@ local Window = Rayfield:CreateWindow({
     end,
  })
 
- local aim_bigheads = AIM:CreateToggle({
-    Name = "Big Heads",
-    CurrentValue = false,
-    Flag = "aim_heads_toggle", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-    Callback = function(Value)
-        _G.HeadSize = 20 _G.Disabled = true game:GetService('RunService').RenderStepped:connect(function() if _G.Disabled then for i,v in next, game:GetService('Players'):GetPlayers() do if v.Name ~= game:GetService('Players').LocalPlayer.Name then pcall(function() v.Character.Head.Size = Vector3.new(_G.HeadSize,_G.HeadSize,_G.HeadSize) v.Character.Head.Transparency = 1 v.Character.Head.BrickColor = BrickColor.new("Red") v.Character.Head.Material = "Neon" v.Character.Head.CanCollide = false v.Character.Head.Massless = true end) end end end end)
-    end,
- })
 
  local Label = about:CreateLabel("by Shmoti, :)", Color3.fromRGB(227, 3, 252), false)
  
